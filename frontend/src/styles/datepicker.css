@@ -1,0 +1,158 @@
+@import "react-datepicker/dist/react-datepicker.css";
+
+/* Wrapper element (react-datepicker renders an extra div around the input) */
+.dashboard-datepicker-wrapper {
+  display: inline-block;
+}
+
+/* Trigger input */
+.dashboard-datepicker {
+  padding: 5px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #1a1a2e;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 170px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.dashboard-datepicker:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.dashboard-datepicker::placeholder {
+  color: #aaa;
+}
+
+/* Highlight the To picker when a specific date is selected (i.e. not "Current"). */
+.dashboard-datepicker--active {
+  background: #e8f5e9;
+  border-color: #4caf50;
+  color: #1a1a2e;
+  font-weight: 500;
+}
+
+/* Popper / calendar container */
+.react-datepicker {
+  font-family: inherit;
+  font-size: 13px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  color: #1a1a2e;
+  overflow: hidden;
+}
+
+.react-datepicker__triangle {
+  display: none;
+}
+
+/* Header */
+.react-datepicker__header {
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+  padding-top: 10px;
+}
+
+.react-datepicker__current-month,
+.react-datepicker-time__header {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1a1a2e;
+  padding-bottom: 6px;
+}
+
+.react-datepicker__day-name {
+  color: #888;
+  font-weight: 500;
+  width: 2rem;
+  margin: 0.2rem;
+}
+
+/* Nav arrows */
+.react-datepicker__navigation {
+  top: 12px;
+}
+
+.react-datepicker__navigation-icon::before {
+  border-color: #666;
+  border-width: 2px 2px 0 0;
+}
+
+/* Days */
+.react-datepicker__day {
+  width: 2rem;
+  line-height: 2rem;
+  margin: 0.2rem;
+  border-radius: 6px;
+  color: #1a1a2e;
+  transition: background 0.1s;
+}
+
+.react-datepicker__day:hover {
+  background: #e8f5e9;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background: #4caf50 !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.react-datepicker__day--today {
+  font-weight: 700;
+  color: #4caf50;
+}
+
+.react-datepicker__day--outside-month {
+  color: #ccc;
+}
+
+.react-datepicker__day--disabled {
+  color: #ddd;
+  cursor: not-allowed;
+}
+
+/* Time column */
+.react-datepicker__time-container {
+  border-left: 1px solid #e5e7eb;
+  width: 90px;
+}
+
+.react-datepicker__time-container .react-datepicker__time {
+  background: #fff;
+}
+
+.react-datepicker__time-list-item {
+  height: auto !important;
+  padding: 6px 0 !important;
+  font-size: 13px;
+  color: #1a1a2e;
+}
+
+.react-datepicker__time-list-item:hover {
+  background: #e8f5e9 !important;
+}
+
+.react-datepicker__time-list-item--selected {
+  background: #4caf50 !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.react-datepicker__time-list-item--disabled {
+  color: #ddd !important;
+}
+
+/* Make the popper sit above the rest of the UI cleanly */
+.react-datepicker-popper {
+  z-index: 100;
+}
