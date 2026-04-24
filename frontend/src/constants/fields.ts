@@ -1,3 +1,9 @@
+// Field names match the Meshtastic CSV exports written into the `environment`
+// measurement. Three packet types share the bucket and are distinguished by
+// the `sensor` tag (environmentMetrics / powerMetrics / airQualityMetrics);
+// shared radio fields (rxSnr, rxRssi, rxTime, hopStart, hopLimit) appear
+// across all of them.
+
 export const FIELD_LABELS: Record<string, string> = {
   temperature: "Temp",
   relativeHumidity: "Humidity",
@@ -12,12 +18,13 @@ export const FIELD_LABELS: Record<string, string> = {
   pm10Environmental: "PM1.0 Env",
   pm25Environmental: "PM2.5 Env",
   pm100Environmental: "PM10 Env",
-  batteryLevel: "Battery",
-  voltage: "Voltage",
-  channelUtilization: "Ch Util",
-  airUtilTx: "Air Util",
+  ch3Voltage: "Voltage",
+  ch3Current: "Current",
   rxSnr: "SNR",
   rxRssi: "RSSI",
+  rxTime: "Rx Time",
+  hopStart: "Hop Start",
+  hopLimit: "Hop Limit",
 };
 
 export const FIELD_UNITS: Record<string, string> = {
@@ -34,20 +41,20 @@ export const FIELD_UNITS: Record<string, string> = {
   pm10Environmental: " \u00B5g/m\u00B3",
   pm25Environmental: " \u00B5g/m\u00B3",
   pm100Environmental: " \u00B5g/m\u00B3",
-  batteryLevel: "%",
-  voltage: " V",
-  channelUtilization: "%",
-  airUtilTx: "%",
+  ch3Voltage: " V",
+  ch3Current: " mA",
   rxSnr: " dB",
   rxRssi: " dBm",
+  rxTime: "",
+  hopStart: "",
+  hopLimit: "",
 };
 
 export const HEADER_FIELDS = [
-  "pm100Standard",
+  "temperature",
+  "relativeHumidity",
   "pm25Standard",
-  "windSpeed",
-  "windDirection",
-  "voltage",
+  "ch3Voltage",
 ];
 
 export function fieldLabel(field: string): string {

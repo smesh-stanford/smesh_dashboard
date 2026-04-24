@@ -4,7 +4,7 @@ datasources:
   - name: InfluxDB
     type: influxdb
     access: proxy
-    url: http://influxdb:8086
+    url: ${INFLUXDB_URL}
     jsonData:
       version: Flux
       organization: ${INFLUXDB_ORG}

@@ -24,7 +24,7 @@ const SECTIONS: Section[] = [
     title: "Device Functionality",
     panels: [
       { id: 1, title: "Voltage" },
-      { id: 2, title: "Battery Level" },
+      { id: 2, title: "Current" },
       { id: 3, title: "rxSnr" },
       { id: 4, title: "rxRssi" },
     ],
