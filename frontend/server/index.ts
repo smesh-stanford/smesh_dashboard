@@ -11,6 +11,8 @@ const config = {
   influxToken: process.env.INFLUXDB_TOKEN || "",
   influxOrg: process.env.INFLUXDB_ORG || "telemetry-org",
   influxBucket: process.env.INFLUXDB_BUCKET || "telemetry",
+  influxMeasurement: process.env.INFLUX_MEASUREMENT || "environment",
+  influxNodeTag: process.env.INFLUX_NODE_TAG || "node",
   grafanaPublicUrl: process.env.GRAFANA_PUBLIC_URL || "http://localhost:3001",
 };
 
@@ -58,12 +60,15 @@ function isInvalidRange(start: FluxTime, stop: FluxTime, now: Date): boolean {
 }
 
 function buildQuery(bucket: string, start: FluxTime, stop: FluxTime): string {
+  // Re-group by (node, field) before last() so that fields appearing under
+  // multiple `sensor` tag values (rxSnr, rxRssi, rxTime, hopStart, hopLimit)
+  // collapse to a single most-recent value per node instead of one per sensor.
   return `
     from(bucket: "${bucket}")
       |> range(start: ${fluxTimeLiteral(start)}, stop: ${fluxTimeLiteral(stop)})
-      |> filter(fn: (r) => r._measurement == "telemetry")
+      |> filter(fn: (r) => r._measurement == "${config.influxMeasurement}")
+      |> group(columns: ["${config.influxNodeTag}", "_field"])
       |> last()
-      |> group(columns: ["node", "_field"])
   `;
 }
 
@@ -76,8 +81,13 @@ async function fetchTelemetryRows(
     queryApi.queryRows(buildQuery(config.influxBucket, start, stop), {
       next(row, tableMeta) {
         const obj = tableMeta.toObject(row);
+        const node = obj[config.influxNodeTag];
+        // Older rows in the bucket use a different tag name (e.g. node_id)
+        // so the configured tag may be undefined; skip those silently rather
+        // than letting downstream sort/group blow up.
+        if (typeof node !== "string" || node === "") return;
         rows.push({
-          node: obj.node as string,
+          node,
           field: obj._field as string,
           value: obj._value as number,
           time: obj._time as string,
