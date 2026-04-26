@@ -1,0 +1,142 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Voltage",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "influxdb", "uid": "" },
+      "targets": [{ "refId": "A", "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"telemetry\")\n  |> filter(fn: (r) => r.node == \"${node}\")\n  |> filter(fn: (r) => r._field == \"voltage\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")" }],
+      "fieldConfig": { "defaults": { "unit": "volt", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] },
+      "options": { "tooltip": { "mode": "single" }, "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 2,
+      "title": "Battery Level",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "influxdb", "uid": "" },
+      "targets": [{ "refId": "A", "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"telemetry\")\n  |> filter(fn: (r) => r.node == \"${node}\")\n  |> filter(fn: (r) => r._field == \"batteryLevel\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] },
+      "options": { "tooltip": { "mode": "single" }, "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 3,
+      "title": "rxSnr",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "datasource": { "type": "influxdb", "uid": "" },
+      "targets": [{ "refId": "A", "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"telemetry\")\n  |> filter(fn: (r) => r.node == \"${node}\")\n  |> filter(fn: (r) => r._field == \"rxSnr\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")" }],
+      "fieldConfig": { "defaults": { "unit": "dB", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] },
+      "options": { "tooltip": { "mode": "single" }, "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 4,
+      "title": "rxRssi",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "datasource": { "type": "influxdb", "uid": "" },
+      "targets": [{ "refId": "A", "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"telemetry\")\n  |> filter(fn: (r) => r.node == \"${node}\")\n  |> filter(fn: (r) => r._field == \"rxRssi\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")" }],
+      "fieldConfig": { "defaults": { "unit": "dBm", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] },
+      "options": { "tooltip": { "mode": "single" }, "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 5,
+      "title": "PM10",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "datasource": { "type": "influxdb", "uid": "" },
+      "targets": [{ "refId": "A", "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"telemetry\")\n  |> filter(fn: (r) => r.node == \"${node}\")\n  |> filter(fn: (r) => r._field == \"pm100Standard\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")" }],
+      "fieldConfig": { "defaults": { "unit": "conμgm3", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] },
+      "options": { "tooltip": { "mode": "single" }, "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 6,
+      "title": "PM2.5",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "datasource": { "type": "influxdb", "uid": "" },
+      "targets": [{ "refId": "A", "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"telemetry\")\n  |> filter(fn: (r) => r.node == \"${node}\")\n  |> filter(fn: (r) => r._field == \"pm25Standard\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")" }],
+      "fieldConfig": { "defaults": { "unit": "conμgm3", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] },
+      "options": { "tooltip": { "mode": "single" }, "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 7,
+      "title": "Wind Speed",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+      "datasource": { "type": "influxdb", "uid": "" },
+      "targets": [{ "refId": "A", "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"telemetry\")\n  |> filter(fn: (r) => r.node == \"${node}\")\n  |> filter(fn: (r) => r._field == \"windSpeed\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")" }],
+      "fieldConfig": { "defaults": { "unit": "velocityms", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] },
+      "options": { "tooltip": { "mode": "single" }, "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 8,
+      "title": "Wind Direction",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+      "datasource": { "type": "influxdb", "uid": "" },
+      "targets": [{ "refId": "A", "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"telemetry\")\n  |> filter(fn: (r) => r.node == \"${node}\")\n  |> filter(fn: (r) => r._field == \"windDirection\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")" }],
+      "fieldConfig": { "defaults": { "unit": "degree", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] },
+      "options": { "tooltip": { "mode": "single" }, "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 9,
+      "title": "Temperature",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+      "datasource": { "type": "influxdb", "uid": "" },
+      "targets": [{ "refId": "A", "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"telemetry\")\n  |> filter(fn: (r) => r.node == \"${node}\")\n  |> filter(fn: (r) => r._field == \"temperature\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")" }],
+      "fieldConfig": { "defaults": { "unit": "celsius", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] },
+      "options": { "tooltip": { "mode": "single" }, "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 10,
+      "title": "Relative Humidity",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+      "datasource": { "type": "influxdb", "uid": "" },
+      "targets": [{ "refId": "A", "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"telemetry\")\n  |> filter(fn: (r) => r.node == \"${node}\")\n  |> filter(fn: (r) => r._field == \"relativeHumidity\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")" }],
+      "fieldConfig": { "defaults": { "unit": "humidity", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] },
+      "options": { "tooltip": { "mode": "single" }, "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 11,
+      "title": "Barometric Pressure",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 40 },
+      "datasource": { "type": "influxdb", "uid": "" },
+      "targets": [{ "refId": "A", "query": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"telemetry\")\n  |> filter(fn: (r) => r.node == \"${node}\")\n  |> filter(fn: (r) => r._field == \"barometricPressure\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")" }],
+      "fieldConfig": { "defaults": { "unit": "pressurehpa", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "pointSize": 5, "showPoints": "auto" } }, "overrides": [] },
+      "options": { "tooltip": { "mode": "single" }, "legend": { "displayMode": "list", "placement": "bottom" } }
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": ["telemetry"],
+  "templating": {
+    "list": [
+      {
+        "name": "node",
+        "type": "query",
+        "datasource": { "type": "influxdb", "uid": "" },
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"telemetry\", tag: \"node\")",
+        "current": { "text": "0x433aad0c", "value": "0x433aad0c" },
+        "refresh": 1,
+        "multi": false,
+        "includeAll": false
+      }
+    ]
+  },
+  "time": { "from": "now-24h", "to": "now" },
+  "title": "Node Telemetry",
+  "uid": "node-telemetry"
+}
