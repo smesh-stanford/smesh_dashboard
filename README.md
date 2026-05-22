@@ -27,9 +27,19 @@ database.
 ```bash
 git clone https://github.com/smesh-stanford/smesh_dashboard.git
 cd smesh_dashboard
-# Edit .env to point at your InfluxDB (see "Connecting to your InfluxDB" below)
+
+# Copy the template and fill in your real InfluxDB connection details.
+cp .env.example .env             # macOS / Linux
+# Copy-Item .env.example .env    # PowerShell
+# Then edit .env — see "Connecting to your InfluxDB" below.
+
 docker compose up --build -d
 ```
+
+The frontend container validates the connection variables at startup and
+will exit immediately with a clear error if any required variable is
+missing or still set to its `.env.example` placeholder. Check
+`docker compose logs frontend` if the container keeps restarting.
 
 When it settles:
 
@@ -52,42 +62,45 @@ docker compose up --build frontend -d   # rebuild only the web app
 
 ## Connecting to your InfluxDB
 
-This is the single most important configuration step. Everything the
-dashboard knows about your data — where to query, what measurement to
-filter on, which tag identifies a node — is set in `.env`.
+### Required .env variables
 
-### Required variables
+The full template lives in [`.env.example`](./.env.example) — copy it to
+`.env` once and edit in place:
 
-Edit `.env` at the project root:
-
-```ini
-# Where InfluxDB lives. Use the host's IP or hostname; it must be reachable
-# from inside the Docker containers (so 127.0.0.1 will NOT work — use
-# host.docker.internal on Docker Desktop, or the LAN IP).
-INFLUXDB_URL=http://10.136.92.31:8086
-
-# An API token with read access to the bucket below. Admin tokens work; a
-# read-only token scoped to one bucket is safer.
-INFLUXDB_TOKEN=<your-token>
-
-# Org name and bucket name as they appear in InfluxDB.
-INFLUXDB_ORG=SMesh
-INFLUXDB_BUCKET=SMesh
-
-# Schema knobs — see "Schema assumptions" below for what to put here.
-INFLUX_MEASUREMENT=environment
-INFLUX_NODE_TAG=fromNode
-
-# Grafana admin login. Change before exposing publicly.
-GF_SECURITY_ADMIN_USER=admin
-GF_SECURITY_ADMIN_PASSWORD=admin
+```bash
+cp .env.example .env             # macOS / Linux
+# Copy-Item .env.example .env    # PowerShell
 ```
+
+The four variables that **must** be filled in (the server refuses to
+start otherwise):
+
+| Variable          | What it is                                                          |
+| ----------------- | ------------------------------------------------------------------- |
+| `INFLUXDB_URL`    | URL of your InfluxDB 2.x instance, reachable from inside containers. Use a LAN IP or `host.docker.internal` — `localhost` will not work. |
+| `INFLUXDB_TOKEN`  | API token with read access to the bucket. Read-only tokens scoped to a single bucket are safer than admin tokens. |
+| `INFLUXDB_ORG`    | Organization name exactly as it appears in InfluxDB.                |
+| `INFLUXDB_BUCKET` | Bucket containing your telemetry data.                              |
+
+Optional knobs (sensible defaults shipped in `.env.example`):
+
+| Variable                  | Default       | Notes                                  |
+| ------------------------- | ------------- | -------------------------------------- |
+| `INFLUX_MEASUREMENT`      | `environment` | See [Schema assumptions](#schema-assumptions). |
+| `INFLUX_NODE_TAG`         | `fromNode`    | See [Schema assumptions](#schema-assumptions). |
+| `GF_SECURITY_ADMIN_USER`  | `admin`       | Grafana login — change before exposing publicly. |
+| `GF_SECURITY_ADMIN_PASSWORD` | `admin`    | Same — `.env.example` ships an obvious default for local use only. |
 
 After editing `.env`:
 
 ```bash
 docker compose up --build -d
 ```
+
+If you left a placeholder in place (e.g. `INFLUXDB_TOKEN=replace-with-your-influxdb-token`),
+the frontend container will exit on startup with a message listing
+exactly which variables it can't accept. Edit `.env` and bring the
+stack back up.
 
 ### Discovering your schema (if you don't already know it)
 
@@ -344,8 +357,14 @@ smesh_dashboard/
 - **`docker-compose.yml`** — declares the two services (`frontend`,
   `grafana`), wires environment variables from `.env`, exposes ports, and
   sets up a named volume for Grafana state. No InfluxDB service.
-- **`.env`** — InfluxDB connection (URL, token, org, bucket), schema
-  config (`INFLUX_MEASUREMENT`, `INFLUX_NODE_TAG`), and Grafana admin
+- **`.env.example`** — committed template listing every environment
+  variable the stack reads. Required vars (`INFLUXDB_URL`,
+  `INFLUXDB_TOKEN`, `INFLUXDB_ORG`, `INFLUXDB_BUCKET`) use obvious
+  placeholders that the server refuses to start with. Copy this to
+  `.env` and fill in your real values.
+- **`.env`** *(gitignored)* — your local copy with real secrets.
+  InfluxDB connection (URL, token, org, bucket), schema config
+  (`INFLUX_MEASUREMENT`, `INFLUX_NODE_TAG`), and Grafana admin
   credentials. Consumed by both services.
 
 ### Frontend — Express server
@@ -470,6 +489,12 @@ for offline experimentation. Safe to delete if you don't need it.
 ---
 
 ## Troubleshooting
+
+**Frontend container exits immediately with "Dashboard startup failed: invalid environment configuration"**
+You either skipped the `cp .env.example .env` step, or left one of the
+required variables blank / set to its placeholder value. The error
+message lists which variables are wrong — edit `.env` and run
+`docker compose up -d frontend` again.
 
 **`docker compose up` fails with "Cannot connect to the Docker daemon"**
 Docker Desktop isn't running. Start it from the Start menu and wait for
