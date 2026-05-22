@@ -321,18 +321,13 @@ smesh_dashboard/
 │       ├── utils/time.ts       # useNow hook + relative-time formatter
 │       └── styles/datepicker.css  # react-datepicker theme overrides
 │
-├── grafana/
-│   ├── grafana.ini             # Allow embedding + anonymous viewer
-│   └── provisioning/
-│       ├── datasources/influxdb.yml   # Auto-registers InfluxDB datasource
-│       └── dashboards/
-│           ├── dashboard.yml          # Tells Grafana to load JSON dashboards
-│           └── telemetry.json         # 11-panel "Node Telemetry" dashboard
-│
-└── influxdb/                   # (Legacy) sample-data seeder, not used
-    ├── Dockerfile              # by docker-compose any longer. Useful as a
-    ├── requirements.txt        # reference if you ever want to populate a
-    └── seed.py                 # local InfluxDB for offline testing.
+└── grafana/
+    ├── grafana.ini             # Allow embedding + anonymous viewer
+    └── provisioning/
+        ├── datasources/influxdb.yml   # Auto-registers InfluxDB datasource
+        └── dashboards/
+            ├── dashboard.yml          # Tells Grafana to load JSON dashboards
+            └── telemetry.json         # 11-panel "Node Telemetry" dashboard
 ```
 
 ---
@@ -460,12 +455,6 @@ Three small files; mostly defaults.
   queries** — they're not env-driven because Grafana provisioning
   doesn't substitute env vars inside panel queries. Edit the JSON
   directly if your schema differs.
-
-### `influxdb/` (legacy)
-
-Not part of the running stack. Originally provisioned a local InfluxDB
-container with synthetic data; kept around only as a reference example
-for offline experimentation. Safe to delete if you don't need it.
 
 ---
 
