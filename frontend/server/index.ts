@@ -6,15 +6,67 @@ const PORT = 3000;
 const DEFAULT_THRESHOLD_MINUTES = 15;
 const DEFAULT_FROM_LOOKBACK_MS = 24 * 60 * 60 * 1000;
 
-const config = {
-  influxUrl: process.env.INFLUXDB_URL || "http://localhost:8086",
-  influxToken: process.env.INFLUXDB_TOKEN || "",
-  influxOrg: process.env.INFLUXDB_ORG || "telemetry-org",
-  influxBucket: process.env.INFLUXDB_BUCKET || "telemetry",
-  influxMeasurement: process.env.INFLUX_MEASUREMENT || "environment",
-  influxNodeTag: process.env.INFLUX_NODE_TAG || "node",
-  grafanaPublicUrl: process.env.GRAFANA_PUBLIC_URL || "http://localhost:3001",
-};
+// Values that come straight from `.env.example`. Treating them as
+// "missing" forces the user to actually edit the template before the
+// server will start.
+const PLACEHOLDER_VALUES = new Set([
+  "http://your-influxdb-host:8086",
+  "replace-with-your-influxdb-token",
+  "your-org",
+  "your-bucket",
+]);
+
+const REQUIRED_ENV_VARS = [
+  "INFLUXDB_URL",
+  "INFLUXDB_TOKEN",
+  "INFLUXDB_ORG",
+  "INFLUXDB_BUCKET",
+] as const;
+
+function loadConfig() {
+  const missing: string[] = [];
+  const placeholder: string[] = [];
+  for (const name of REQUIRED_ENV_VARS) {
+    const raw = process.env[name];
+    if (!raw || raw.trim() === "") {
+      missing.push(name);
+    } else if (PLACEHOLDER_VALUES.has(raw.trim())) {
+      placeholder.push(name);
+    }
+  }
+
+  if (missing.length > 0 || placeholder.length > 0) {
+    const lines = ["Dashboard startup failed: invalid environment configuration."];
+    if (missing.length > 0) {
+      lines.push("");
+      lines.push("  Missing required variables:");
+      for (const name of missing) lines.push(`    - ${name}`);
+    }
+    if (placeholder.length > 0) {
+      lines.push("");
+      lines.push("  Variables still set to their .env.example placeholder:");
+      for (const name of placeholder) lines.push(`    - ${name}`);
+    }
+    lines.push("");
+    lines.push("  Copy .env.example to .env and fill in real values, then restart:");
+    lines.push("    cp .env.example .env       # macOS/Linux");
+    lines.push("    Copy-Item .env.example .env  # PowerShell");
+    console.error(lines.join("\n"));
+    process.exit(1);
+  }
+
+  return {
+    influxUrl: (process.env.INFLUXDB_URL as string).trim(),
+    influxToken: (process.env.INFLUXDB_TOKEN as string).trim(),
+    influxOrg: (process.env.INFLUXDB_ORG as string).trim(),
+    influxBucket: (process.env.INFLUXDB_BUCKET as string).trim(),
+    influxMeasurement: process.env.INFLUX_MEASUREMENT?.trim() || "environment",
+    influxNodeTag: process.env.INFLUX_NODE_TAG?.trim() || "node",
+    grafanaPublicUrl: process.env.GRAFANA_PUBLIC_URL?.trim() || "http://localhost:3001",
+  };
+}
+
+const config = loadConfig();
 
 const queryApi: QueryApi = new InfluxDB({
   url: config.influxUrl,
@@ -169,4 +221,10 @@ app.get("*", (_req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Telemetry dashboard server running on port ${PORT}`);
+  console.log(
+    `  InfluxDB: ${config.influxUrl} (org=${config.influxOrg}, bucket=${config.influxBucket})`,
+  );
+  console.log(
+    `  Schema:   measurement=${config.influxMeasurement}, node tag=${config.influxNodeTag}`,
+  );
 });
