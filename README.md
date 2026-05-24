@@ -64,7 +64,7 @@ Edit `.env` at the project root:
 # Where InfluxDB lives. Use the host's IP or hostname; it must be reachable
 # from inside the Docker containers (so 127.0.0.1 will NOT work — use
 # host.docker.internal on Docker Desktop, or the LAN IP).
-INFLUXDB_URL=http://10.136.92.31:8086
+INFLUXDB_URL=http://HOST_IP_HERE:8086
 
 # An API token with read access to the bucket below. Admin tokens work; a
 # read-only token scoped to one bucket is safer.
@@ -292,6 +292,37 @@ be reachable from the host machine.
 | Visualization | Grafana OSS (provisioned dashboards & datasource)     |
 | Database      | InfluxDB 2.x (Flux query language) — external         |
 | Orchestration | Docker Compose                                        |
+
+### Version pin policy
+
+All runtime versions are pinned so builds are reproducible from a clean
+state.
+
+| Pin                        | Where it lives                  | When to bump                                                                 |
+| -------------------------- | ------------------------------- | ---------------------------------------------------------------------------- |
+| **Grafana**                | `docker-compose.yml`            | Deliberately, and re-test that embedded panels still render. Major version jumps may require provisioning-JSON tweaks. |
+| **Node + Alpine**          | `frontend/Dockerfile` (both stages) | Node security releases, or when moving LTS lines. Keep both stages in sync. |
+| **npm dependencies**       | `frontend/package-lock.json`    | Bump locally with `npm update` (or `npm install <pkg>@<version>`), then commit the regenerated lockfile. The container build uses `npm ci`, which installs strictly from the lockfile and fails fast if it drifts out of sync with `package.json`. |
+
+To update npm dependencies:
+
+```bash
+cd frontend
+npm update                   # or: npm install <pkg>@<version>
+git add package.json package-lock.json
+git commit -m "Bump <pkg>"
+```
+
+To verify a clean container build:
+
+```bash
+docker compose build --no-cache
+docker compose up -d
+```
+
+If `npm ci` fails inside the container with "package-lock.json is out of
+sync with package.json", regenerate the lockfile locally
+(`cd frontend && rm -rf node_modules && npm install`) and commit it.
 
 ---
 
