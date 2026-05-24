@@ -1,14 +1,14 @@
-FROM node:20-alpine AS builder
+FROM node:20.18.1-alpine3.20 AS builder
 WORKDIR /app
-COPY package.json ./
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM node:20-alpine
+FROM node:20.18.1-alpine3.20
 WORKDIR /app
-COPY package.json ./
-RUN npm install --omit=dev
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
 COPY server ./server
 EXPOSE 3000
